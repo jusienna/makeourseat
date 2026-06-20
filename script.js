@@ -1,69 +1,84 @@
-:root {
-    --chair-color: #4ea8de;
-    --empty-color: #f1f3f5;
-    --text-color: #333;
-}
-
 body {
-    font-family: 'Malgun Gothic', sans-serif;
-    background-color: #f8f9fa;
+    font-family: 'Malgun Gothic', 'Apple SD Gothic Neo', sans-serif;
+    background-color: #f4f6f9;
     margin: 0;
     padding: 20px;
     display: flex;
     justify-content: center;
-    color: var(--text-color);
 }
 
 .container {
     width: 100%;
-    max-width: 900px;
+    max-width: 1000px;
     text-align: center;
+    background: white;
+    padding: 30px;
+    border-radius: 15px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
 }
 
 h1 {
-    margin-bottom: 30px;
-    color: #2b2d42;
+    color: #2c3e50;
+    margin-bottom: 25px;
 }
 
 /* 교탁 스타일 */
 .teacher-desk {
-    width: 200px;
-    height: 50px;
-    background-color: #8d99ae;
+    width: 220px;
+    height: 45px;
+    background-color: #7f8c8d;
     color: white;
-    line-height: 50px;
-    margin: 0 auto 40px auto;
-    border-radius: 5px;
+    line-height: 45px;
+    margin: 0 auto 35px auto;
+    border-radius: 4px;
     font-weight: bold;
-    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    font-size: 16px;
 }
 
-/* 교실 전체 (3분단 가로 배치) */
+/* 교실 전체 레이아웃 (3개 분단 가로 배치) */
 .classroom {
     display: flex;
-    justify-content: space-between;
-    gap: 25px;
-    margin-bottom: 40px;
+    justify-content: center;
+    gap: 40px;
+    margin-bottom: 35px;
+    flex-wrap: wrap; /* 화면이 좁아지면 아래로 내려가도록 보장 */
 }
 
-/* 각 분단 스타일 (Grid를 활용한 2열 구조) */
+.group-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.group-title {
+    font-weight: bold;
+    font-size: 16px;
+    margin-bottom: 10px;
+    color: #34495e;
+    background: #e1e8ed;
+    padding: 4px 15px;
+    border-radius: 10px;
+}
+
+/* 분단 내부 Grid 설정 (확실하게 2열 구조 고정) */
 .column-group {
     display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 15px;
-    background-color: #ffffff;
+    grid-template-columns: repeat(2, 80px); /* 가로 2열, 각 자리 80px */
+    gap: 12px;
+    background-color: #fdfdfd;
     padding: 15px;
-    border-radius: 10px;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.05);
-    flex: 1;
+    border: 2px solid #e2e8f0;
+    border-radius: 12px;
+    min-height: 200px;
 }
 
-/* 학생 의자 스타일 */
+/* 학생 의자/책상 스타일 (눈에 확 띄는 사각형 구조) */
 .seat {
-    height: 55px;
-    background-color: var(--chair-color);
+    width: 80px;
+    height: 60px;
+    background-color: #3498db;
     color: white;
-    border: 2px solid #0077b6;
+    border: 2px solid #2980b9;
     border-radius: 8px;
     display: flex;
     flex-direction: column;
@@ -71,47 +86,49 @@ h1 {
     align-items: center;
     font-weight: bold;
     font-size: 15px;
-    transition: all 0.3s ease;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
 
-/* 지정된 빈자리 스타일 */
-.seat.empty {
-    background-color: var(--empty-color);
-    border: 2px dashed #dee2e6;
-    color: #adb5bd;
-    font-size: 13px;
-}
-
+/* 행 표시 레이블 소텍스트 */
 .seat .seat-label {
     font-size: 10px;
-    opacity: 0.8;
-    margin-bottom: 2px;
+    opacity: 0.85;
+    margin-bottom: 3px;
 }
 
-/* 버튼 및 하단 제어 */
+/* 2분단 5행 우측 공백 자리 전용 스타일 */
+.seat.empty {
+    background-color: #e9ecef;
+    border: 2px dashed #ced4da;
+    color: #adb5bd;
+    box-shadow: none;
+}
+
+/* 하단 버튼 및 가이드 */
 .controls {
-    margin-top: 20px;
+    margin-top: 25px;
 }
 
 button {
-    padding: 15px 40px;
+    padding: 15px 45px;
     font-size: 18px;
     font-weight: bold;
-    background-color: #ef233c;
+    background-color: #e74c3c;
     color: white;
     border: none;
     border-radius: 8px;
     cursor: pointer;
-    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-    transition: background 0.2s;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.15);
+    transition: all 0.2s ease;
 }
 
 button:hover {
-    background-color: #d90429;
+    background-color: #c0392b;
+    transform: translateY(-1px);
 }
 
 .notice {
     font-size: 13px;
-    color: #6c757d;
+    color: #7f8c8d;
     margin-top: 15px;
 }
