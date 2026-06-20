@@ -1,46 +1,47 @@
-// 1번부터 27번까지 학생 배열 생성
+// 1번부터 27번까지 학생 배열 초기화
 let currentLayout = Array.from({ length: 27 }, (_, i) => i + 1);
-// 직전 판의 짝꿍 쌍을 저장할 Set (예: "1-5")
+// 직전 판의 짝꿍 쌍 목록
 let previousPairs = new Set();
 
-// HTML 요소 연결
+// DOM 요소 탐색
 const group1 = document.getElementById('group1');
 const group2 = document.getElementById('group2');
 const group3 = document.getElementById('group3');
 const shuffleBtn = document.getElementById('shuffle-btn');
 
-// 좌석 화면에 그리기 함수
+// 좌석 화면 렌더링 함수
 function renderClassroom(layout) {
+    // 기존에 그려진 좌석들을 깨끗이 비우기
     group1.innerHTML = '';
     group2.innerHTML = '';
     group3.innerHTML = '';
 
     let seatIdx = 0;
 
-    // 1분단: 2열 5행 (총 10석)
+    // [1분단] 2열 5행 = 총 10석
     for (let i = 0; i < 10; i++) {
         const row = Math.floor(i / 2) + 1;
-        group1.appendChild(createSeatElement(layout[seatIdx++], `1분단 ${row}행`));
+        group1.appendChild(createSeatElement(layout[seatIdx++], `${row}행`));
     }
 
-    // 2분단: 2열 5행 (총 10석 공간 중 마지막 한 자리는 빈자리)
+    // [2분단] 2열 5행 = 총 10석 공간 중 마지막 한 자리는 엑스표 빈자리
     for (let i = 0; i < 10; i++) {
         const row = Math.floor(i / 2) + 1;
-        if (i === 9) { // 5행의 두 번째 자리 (오른쪽)를 빈자리로 지정
-            group2.appendChild(createEmptySeatElement("빈자리"));
+        if (i === 9) { // 5행의 오른쪽 자리는 공석 처리
+            group2.appendChild(createEmptySeatElement("❌"));
         } else {
-            group2.appendChild(createSeatElement(layout[seatIdx++], `2분단 ${row}행`));
+            group2.appendChild(createSeatElement(layout[seatIdx++], `${row}행`));
         }
     }
 
-    // 3분단: 2열 4행 (총 8석)
+    // [3분단] 2열 4행 = 총 8석
     for (let i = 0; i < 8; i++) {
         const row = Math.floor(i / 2) + 1;
-        group3.appendChild(createSeatElement(layout[seatIdx++], `3분단 ${row}행`));
+        group3.appendChild(createSeatElement(layout[seatIdx++], `${row}행`));
     }
 }
 
-// 일반 좌석 DOM 생성
+// 학생 좌석 엘리먼트 생성
 function createSeatElement(studentNum, label) {
     const seat = document.createElement('div');
     seat.className = 'seat';
@@ -48,36 +49,34 @@ function createSeatElement(studentNum, label) {
     return seat;
 }
 
-// 빈자리 DOM 생성
+// 공석(빈자리) 엘리먼트 생성
 function createEmptySeatElement(text) {
     const seat = document.createElement('div');
     seat.className = 'seat empty';
-    seat.textContent = text;
+    seat.innerHTML = `<span class="seat-label">5행</span><span>${text}</span>`;
     return seat;
 }
 
-// 현재 가로로 바로 이웃한 짝꿍들의 쌍을 추출하는 함수
+// 가로로 이웃한 인덱스끼리 짝꿍 정보 추출
 function extractPairs(layout) {
     const pairs = new Set();
-    // 가로로 짝이 되는 인덱스 쌍 정의 (분단 경계 및 빈자리 예외 반영)
     const pairLeftIndices = [
-        0, 2, 4, 6, 8,       // 1분단 (0-1, 2-3, 4-5, 6-7, 8-9)
-        10, 12, 14, 16,      // 2분단 (10-11, 12-13, 14-15, 16-17 / 18번은 짝없음)
-        19, 21, 23, 25       // 3분단 (19-20, 21-22, 23-24, 25-26)
+        0, 2, 4, 6, 8,       // 1분단 가로 쌍들
+        10, 12, 14, 16,      // 2분단 가로 쌍들 (18번 자리는 뒤가 빈자리라 짝 없음)
+        19, 21, 23, 25       // 3분단 가로 쌍들
     ];
 
     pairLeftIndices.forEach(idx => {
         const s1 = layout[idx];
         const s2 = layout[idx + 1];
         if (s1 && s2) {
-            // 작은 번호가 앞으로 오게 하여 중복 체크를 통일 ("1-2"와 "2-1" 방지)
             pairs.add(`${Math.min(s1, s2)}-${Math.max(s1, s2)}`);
         }
     });
     return pairs;
 }
 
-// 셔플된 배열에 이전 짝꿍이 포함되어 있는지 검사
+// 셔플된 레이아웃에 이전 짝꿍 조합이 포함되어 있는지 검증
 function hasPreviousPair(shuffledLayout) {
     if (previousPairs.size === 0) return false;
 
@@ -93,30 +92,30 @@ function hasPreviousPair(shuffledLayout) {
         if (s1 && s2) {
             const pairKey = `${Math.min(s1, s2)}-${Math.max(s1, s2)}`;
             if (previousPairs.has(pairKey)) {
-                return true; // 직전 짝꿍 관계가 다시 나타남
+                return true; 
             }
         }
     }
     return false;
 }
 
-// 자리 섞기 알고리즘 실행
+// 자리 무작위 섞기 실행 버튼 이벤트
 function shuffleSeats() {
-    // 섞기 전에 현재 배치에서 짝꿍 데이터를 기록
+    // 섞기 직전의 배치를 기준으로 짝꿍 쌍 저장
     previousPairs = extractPairs(currentLayout);
 
     let nextLayout = [...currentLayout];
     let attempts = 0;
-    const maxAttempts = 1500; // 무한 루프 방지 안전장치
+    const maxAttempts = 2000; // 조건 충족을 위한 최대 루프 횟수
 
     while (attempts < maxAttempts) {
-        // 무작위 셔플 (Fisher-Yates)
+        // Fisher-Yates 셔플 알고리즘
         for (let i = nextLayout.length - 1; i > 0; i--) {
             const j = Math.floor(Math.random() * (i + 1));
             [nextLayout[i], nextLayout[j]] = [nextLayout[j], nextLayout[i]];
         }
 
-        // 이전 짝꿍 조건에 걸리지 않으면 루프 탈출
+        // 이전 짝꿍과 중복되는 배치가 없다면 합격 및 탈출
         if (!hasPreviousPair(nextLayout)) {
             break;
         }
@@ -127,10 +126,10 @@ function shuffleSeats() {
     renderClassroom(currentLayout);
 }
 
-// 페이지가 처음 로드될 때 실행 (처음엔 번호 순 배치)
+// 초기 로딩 시 동작 (처음에는 번호 순서대로 렌더링)
 window.onload = () => {
     renderClassroom(currentLayout);
 };
 
-// 버튼 클릭 이벤트 바인딩
+// 버튼 이벤트 바인딩
 shuffleBtn.addEventListener('click', shuffleSeats);
