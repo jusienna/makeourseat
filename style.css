@@ -1,120 +1,329 @@
-:root {
-    --chair-color: #e0e0e0;
-    --chair-active: #4ea8de;
-    --text-color: #333;
+```javascript id="y3t7pk"
+const EMPTY_SEAT = 20;
+
+// 자리 순서
+const SEATS = [
+    1,2,3,4,5,6,7,8,9,10,
+    11,12,13,14,15,16,17,18,19,20,
+    21,22,23,24,25,26,27,28
+];
+
+let previousPartners =
+    JSON.parse(
+        localStorage.getItem("previousPartners")
+    ) || {};
+
+document
+.getElementById("shuffleBtn")
+.addEventListener(
+    "click",
+    generateSeats
+);
+
+function shuffle(array){
+
+    for(
+        let i=array.length-1;
+        i>0;
+        i--
+    ){
+
+        const j=
+        Math.floor(
+            Math.random()*(i+1)
+        );
+
+        [array[i],array[j]]
+        =
+        [array[j],array[i]];
+    }
+
+    return array;
 }
 
-body {
-    font-family: 'Malgun Gothic', sans-serif;
-    background-color: #f8f9fa;
-    margin: 0;
-    padding: 20px;
-    display: flex;
-    justify-content: center;
-    color: var(--text-color);
+function generateSeats(){
+
+    const names=
+    document
+    .getElementById("studentNames")
+    .value
+    .split("\n")
+    .map(v=>v.trim())
+    .filter(v=>v);
+
+    if(names.length!==27){
+
+        alert(
+            "학생 이름을 정확히 27명 입력해주세요."
+        );
+
+        return;
+    }
+
+    let arrangement;
+
+    let success=false;
+
+    for(
+        let attempt=0;
+        attempt<500;
+        attempt++
+    ){
+
+        const shuffled=
+        shuffle([...names]);
+
+        arrangement=
+        makeArrangement(
+            shuffled
+        );
+
+        if(
+            !hasPreviousPartners(
+                arrangement
+            )
+        ){
+
+            success=true;
+            break;
+        }
+
+    }
+
+    if(!success){
+
+        arrangement=
+        makeArrangement(
+            shuffle([...names])
+        );
+
+    }
+
+    drawClassroom(
+        arrangement
+    );
+
+    savePartners(
+        arrangement
+    );
 }
 
-.container {
-    width: 100%;
-    max-width: 900px;
-    text-align: center;
+function makeArrangement(students){
+
+    const arrangement={};
+
+    let idx=0;
+
+    for(
+        let seat=1;
+        seat<=28;
+        seat++
+    ){
+
+        if(
+            seat===EMPTY_SEAT
+        ){
+
+            arrangement[seat]="빈자리";
+
+            continue;
+        }
+
+        arrangement[seat]=
+        students[idx];
+
+        idx++;
+    }
+
+    return arrangement;
 }
 
-h1 {
-    margin-bottom: 30px;
-    color: #2b2d42;
+function getPartners(arrangement){
+
+    const partners={};
+
+    const pairs=[
+        [1,2],[3,4],[5,6],[7,8],[9,10],
+        [11,12],[13,14],[15,16],[17,18],
+        [21,22],[23,24],[25,26],[27,28]
+    ];
+
+    pairs.forEach(pair=>{
+
+        const a=
+        arrangement[pair[0]];
+
+        const b=
+        arrangement[pair[1]];
+
+        if(
+            a==="빈자리" ||
+            b==="빈자리"
+        ){
+            return;
+        }
+
+        partners[a]=b;
+        partners[b]=a;
+
+    });
+
+    return partners;
 }
 
-/* 교탁 스타일 */
-.teacher-desk {
-    width: 200px;
-    height: 50px;
-    background-color: #8d99ae;
-    color: white;
-    line-height: 50px;
-    margin: 0 auto 40px auto;
-    border-radius: 5px;
-    font-weight: bold;
-    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+function hasPreviousPartners(
+    arrangement
+){
+
+    const current=
+    getPartners(
+        arrangement
+    );
+
+    for(
+        const student
+        in current
+    ){
+
+        if(
+            previousPartners[
+                student
+            ]===current[student]
+        ){
+
+            return true;
+        }
+
+    }
+
+    return false;
 }
 
-/* 교실 전체 (3분단 가로 정렬) */
-.classroom {
-    display: flex;
-    justify-content: space-between;
-    gap: 30px;
-    margin-bottom: 40px;
+function savePartners(
+    arrangement
+){
+
+    previousPartners=
+    getPartners(
+        arrangement
+    );
+
+    localStorage.setItem(
+        "previousPartners",
+        JSON.stringify(
+            previousPartners
+        )
+    );
 }
 
-/* 각 분단 스타일 (2열 구조) */
-.column-group {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 15px;
-    background-color: #ffffff;
-    padding: 15px;
-    border-radius: 10px;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.05);
-    flex: 1;
-}
+function drawClassroom(
+    arrangement
+){
 
-/* 학생 의자 스타일 */
-.seat {
-    height: 55px;
-    background-color: var(--chair-color);
-    border: 2px solid #bdc3c7;
-    border-radius: 8px;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    font-weight: bold;
-    font-size: 14px;
-    transition: all 0.3s ease;
-}
+    const classroom=
+    document.getElementById(
+        "classroom"
+    );
 
-.seat.assigned {
-    background-color: var(--chair-active);
-    color: white;
-    border-color: #0077b6;
-}
+    classroom.innerHTML="";
 
-.seat.empty {
-    background-color: #f1f3f5;
-    border: 2px dashed #dee2e6;
-    color: #adb5bd;
-}
+    createSection(
+        classroom,
+        "1분단",
+        1,
+        10
+    );
 
-.seat .seat-label {
-    font-size: 10px;
-    opacity: 0.8;
-    margin-bottom: 2px;
-}
+    createSection(
+        classroom,
+        "2분단",
+        11,
+        20
+    );
 
-/* 버튼 및 하단 제어 */
-.controls {
-    margin-top: 20px;
-}
+    createSection(
+        classroom,
+        "3분단",
+        21,
+        28
+    );
 
-button {
-    padding: 15px 40px;
-    font-size: 18px;
-    font-weight: bold;
-    background-color: #ef233c;
-    color: white;
-    border: none;
-    border-radius: 8px;
-    cursor: pointer;
-    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-    transition: background 0.2s;
-}
+    function createSection(
+        parent,
+        title,
+        start,
+        end
+    ){
 
-button:hover {
-    background-color: #d90429;
-}
+        const wrapper=
+        document.createElement("div");
 
-.notice {
-    font-size: 13px;
-    color: #6c757d;
-    margin-top: 15px;
+        wrapper.className=
+        "section-wrapper";
+
+        const titleDiv=
+        document.createElement("div");
+
+        titleDiv.className=
+        "section-title";
+
+        titleDiv.textContent=
+        title;
+
+        const section=
+        document.createElement("div");
+
+        section.className=
+        "section";
+
+        for(
+            let seat=start;
+            seat<=end;
+            seat++
+        ){
+
+            const div=
+            document.createElement("div");
+
+            div.className=
+            "seat";
+
+            if(
+                seat===EMPTY_SEAT
+            ){
+
+                div.classList.add(
+                    "empty"
+                );
+            }
+
+            div.innerHTML=
+            `
+            <div class="seat-number">
+                ${seat}번
+            </div>
+            <div class="student-name">
+                ${arrangement[seat]}
+            </div>
+            `;
+
+            section.appendChild(
+                div
+            );
+
+        }
+
+        wrapper.appendChild(
+            titleDiv
+        );
+
+        wrapper.appendChild(
+            section
+        );
+
+        parent.appendChild(
+            wrapper
+        );
+    }
 }
+```
