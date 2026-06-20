@@ -1,148 +1,120 @@
-// 1번부터 27번까지의 학생 배열
-const students = Array.from({ length: 27 }, (_, i) => i + 1);
-
-// 현재 배치된 학생 상태 (인덱스 순서대로 학생 번호가 저장됨)
-let currentLayout = [];
-// 직전 판의 짝꿍 쌍을 저장할 Set (예: "1-5" 또는 "5-1")
-let previousPairs = new Set();
-
-// HTML 요소 가져오기
-const group1 = document.getElementById('group1');
-const group2 = document.getElementById('group2');
-const group3 = document.getElementById('group3');
-const shuffleBtn = document.getElementById('shuffle-btn');
-
-// 초기 화면 그리기 (빈 좌석 상태)
-function initClassroom() {
-    renderSeats(Array(28).fill(null)); // 빈자리 포함 총 28개 공간
+:root {
+    --chair-color: #e0e0e0;
+    --chair-active: #4ea8de;
+    --text-color: #333;
 }
 
-// 좌석 렌더링 함수
-function renderSeats(layout) {
-    group1.innerHTML = '';
-    group2.innerHTML = '';
-    group3.innerHTML = '';
-
-    let seatIndex = 0;
-
-    // 1분단: 2열 5행 (10석)
-    for (let i = 0; i < 10; i++) {
-        group1.appendChild(createSeatElement(layout[seatIndex++], `1분단-${Math.floor(i/2)+1}행`));
-    }
-
-    // 2분단: 2열 5행 (9석 + 빈자리 1석)
-    // 5행의 두 자리 중 오른쪽 자리(마지막 자리)를 빈자리로 설정합니다.
-    for (let i = 0; i < 10; i++) {
-        if (i === 9) { // 2분단 마지막 자리
-            group2.appendChild(createEmptySeatElement("빈자리"));
-        } else {
-            group2.appendChild(createSeatElement(layout[seatIndex++], `2분단-${Math.floor(i/2)+1}행`));
-        }
-    }
-
-    // 3분단: 2열 4행 (8석)
-    for (let i = 0; i < 8; i++) {
-        group3.appendChild(createSeatElement(layout[seatIndex++], `3분단-${Math.floor(i/2)+1}행`));
-    }
+body {
+    font-family: 'Malgun Gothic', sans-serif;
+    background-color: #f8f9fa;
+    margin: 0;
+    padding: 20px;
+    display: flex;
+    justify-content: center;
+    color: var(--text-color);
 }
 
-// 일반 좌석 생성
-function createSeatElement(studentNum, locationLabel) {
-    const seat = document.createElement('div');
-    seat.className = 'seat';
-    if (studentNum) {
-        seat.classList.add('assigned');
-        seat.innerHTML = `<span class="seat-label">${locationLabel}</span><span>${studentNum}번</span>`;
-    } else {
-        seat.textContent = '-';
-    }
-    return seat;
+.container {
+    width: 100%;
+    max-width: 900px;
+    text-align: center;
 }
 
-// 고정 빈자리 생성
-function createEmptySeatElement(text) {
-    const seat = document.createElement('div');
-    seat.className = 'seat empty';
-    seat.textContent = text;
-    return seat;
+h1 {
+    margin-bottom: 30px;
+    color: #2b2d42;
 }
 
-// 짝꿍 관계 추출 함수 (가로로 바로 옆자리인 경우)
-function extractPairs(layout) {
-    const pairs = new Set();
-    
-    // 좌석 배열 구조상 [0,1], [2,3], [4,5] ... 형태로 짝꿍이 됨
-    // 중간에 분단이 바뀌거나 빈자리가 생기는 경계선은 제외하고 계산
-    const validPairLeftIndices = [
-        0, 2, 4, 6, 8,       // 1분단 짝꿍들
-        10, 12, 14, 16,      // 2분단 짝꿍들 (마지막 18번은 짝이 없음)
-        19, 21, 23, 25       // 3분단 짝꿍들
-    ];
-
-    validPairLeftIndices.forEach(idx => {
-        const s1 = layout[idx];
-        const s2 = layout[idx + 1];
-        if (s1 && s2) {
-            pairs.add(`${Math.min(s1, s2)}-${Math.max(s1, s2)}`);
-        }
-    });
-
-    return pairs;
+/* 교탁 스타일 */
+.teacher-desk {
+    width: 200px;
+    height: 50px;
+    background-color: #8d99ae;
+    color: white;
+    line-height: 50px;
+    margin: 0 auto 40px auto;
+    border-radius: 5px;
+    font-weight: bold;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
 }
 
-// 이전 짝꿍 검사 함수
-function hasPreviousPair(layout) {
-    if (previousPairs.size === 0) return false;
-
-    const validPairLeftIndices = [
-        0, 2, 4, 6, 8,
-        10, 12, 14, 16,
-        19, 21, 23, 25
-    ];
-
-    for (let idx of validPairLeftIndices) {
-        const s1 = layout[idx];
-        const s2 = layout[idx + 1];
-        if (s1 && s2) {
-            const pairKey = `${Math.min(s1, s2)}-${Math.max(s1, s2)}`;
-            if (previousPairs.has(pairKey)) {
-                return true; // 이전 짝꿍 발견!
-            }
-        }
-    }
-    return false;
+/* 교실 전체 (3분단 가로 정렬) */
+.classroom {
+    display: flex;
+    justify-content: space-between;
+    gap: 30px;
+    margin-bottom: 40px;
 }
 
-// 자리 섞기 알고리즘
-function shuffleSeats() {
-    let shuffled = [...students];
-    let attempts = 0;
-    const maxAttempts = 1000; // 무한루프 방지 안전장치
-
-    while (attempts < maxAttempts) {
-        // 무작위 셔플 (Fisher-Yates)
-        for (let i = shuffled.length - 1; i > 0; i--) {
-            const j = Math.floor(Math.random() * (i + 1));
-            [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
-        }
-
-        // 만약 기존에 배치된 이력이 있다면, 이전 짝꿍과 겹치는지 확인
-        if (currentLayout.length === 0 || !hasPreviousPair(shuffled)) {
-            break; 
-        }
-        attempts++;
-    }
-
-    // 현재 배치를 직전 배치로 저장하고, 새로운 짝꿍 목록을 업데이트
-    if (currentLayout.length > 0) {
-        previousPairs = extractPairs(currentLayout);
-    }
-    currentLayout = shuffled;
-
-    // 화면에 그리기
-    renderSeats(currentLayout);
+/* 각 분단 스타일 (2열 구조) */
+.column-group {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 15px;
+    background-color: #ffffff;
+    padding: 15px;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+    flex: 1;
 }
 
-// 이벤트 리스너 및 초기화
-shuffleBtn.addEventListener('click', shuffleSeats);
-window.onload = initClassroom;
+/* 학생 의자 스타일 */
+.seat {
+    height: 55px;
+    background-color: var(--chair-color);
+    border: 2px solid #bdc3c7;
+    border-radius: 8px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    font-weight: bold;
+    font-size: 14px;
+    transition: all 0.3s ease;
+}
+
+.seat.assigned {
+    background-color: var(--chair-active);
+    color: white;
+    border-color: #0077b6;
+}
+
+.seat.empty {
+    background-color: #f1f3f5;
+    border: 2px dashed #dee2e6;
+    color: #adb5bd;
+}
+
+.seat .seat-label {
+    font-size: 10px;
+    opacity: 0.8;
+    margin-bottom: 2px;
+}
+
+/* 버튼 및 하단 제어 */
+.controls {
+    margin-top: 20px;
+}
+
+button {
+    padding: 15px 40px;
+    font-size: 18px;
+    font-weight: bold;
+    background-color: #ef233c;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    transition: background 0.2s;
+}
+
+button:hover {
+    background-color: #d90429;
+}
+
+.notice {
+    font-size: 13px;
+    color: #6c757d;
+    margin-top: 15px;
+}
