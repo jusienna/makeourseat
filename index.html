@@ -30,6 +30,51 @@
             margin-bottom: 25px;
         }
 
+        /* 이름 입력 영역 스타일 */
+        .name-input-section {
+            background: #e9ecef;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            text-align: left;
+            border: 1px solid #dee2e6;
+        }
+
+        .name-input-section h3 {
+            margin-top: 0;
+            font-size: 16px;
+            color: #495057;
+            margin-bottom: 10px;
+        }
+
+        #name-input {
+            width: 100%;
+            box-sizing: border-box;
+            padding: 10px;
+            border: 1px solid #ced4da;
+            border-radius: 5px;
+            font-family: inherit;
+            font-size: 14px;
+            resize: vertical;
+            margin-bottom: 10px;
+        }
+
+        #apply-names-btn {
+            padding: 10px 20px;
+            font-size: 14px;
+            font-weight: bold;
+            background-color: #20c997;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        #apply-names-btn:hover {
+            background-color: #12b886;
+        }
+
         /* 교탁 스타일 */
         .teacher-desk {
             width: 220px;
@@ -43,242 +88,7 @@
             font-size: 16px;
         }
 
-        /* 교실 전체 레이아웃 (3개 분단 가로 배치) */
+        /* 교실 전체 레이아웃 */
         .classroom {
             display: flex;
-            justify-content: center;
-            gap: 30px;
-            margin-bottom: 35px;
-        }
-
-        .group-wrapper {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-
-        .group-title {
-            font-weight: bold;
-            font-size: 14px;
-            margin-bottom: 10px;
-            color: #34495e;
-            background: #e1e8ed;
-            padding: 6px 16px;
-            border-radius: 20px;
-        }
-
-        /* 분단 내부 Grid 설정 (강제로 가로 2열 책상 배치 고정) */
-        .column-group {
-            display: grid;
-            grid-template-columns: repeat(2, 100px); /* 무조건 가로 2줄 */
-            gap: 15px;
-            background-color: #fafbfc;
-            padding: 15px;
-            border: 2px solid #e2e8f0;
-            border-radius: 12px;
-        }
-
-        /* 학생 책상/의자 스타일 (눈에 확 띄는 사각형 책상) */
-        .seat {
-            width: 100px;
-            height: 70px;
-            background-color: #3498db; /* 선명한 파란색 책상 */
-            color: #ffffff;
-            border: 3px solid #2980b9;
-            border-radius: 8px;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            font-weight: bold;
-            font-size: 16px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.15);
-            box-sizing: border-box;
-        }
-
-        /* 행 표시 (예: 1행) */
-        .seat .seat-label {
-            font-size: 11px;
-            color: #f1f3f5;
-            opacity: 0.9;
-            margin-bottom: 4px;
-            font-weight: normal;
-        }
-
-        /* 2분단 5행 우측 공백 자리 (빈자리 표시) */
-        .seat.empty {
-            background-color: #e9ecef;
-            border: 3px dashed #ced4da;
-            color: #adb5bd;
-            box-shadow: none;
-        }
-
-        /* 하단 버튼 제어 */
-        .controls {
-            margin-top: 25px;
-        }
-
-        button {
-            padding: 15px 45px;
-            font-size: 18px;
-            font-weight: bold;
-            background-color: #e74c3c;
-            color: white;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.15);
-        }
-
-        button:hover {
-            background-color: #c0392b;
-        }
-
-        .notice {
-            font-size: 13px;
-            color: #7f8c8d;
-            margin-top: 15px;
-        }
-    </style>
-</head>
-<body>
-    <div class="container">
-        <h1>🏫 3학년 우리반 자리 바꾸기</h1>
-        
-        <div class="teacher-desk">교탁 (칠판)</div>
-
-        <div class="classroom">
-            <div class="group-wrapper">
-                <div class="group-title">1분단</div>
-                <div class="column-group" id="group1"></div>
-            </div>
-            
-            <div class="group-wrapper">
-                <div class="group-title">2분단</div>
-                <div class="column-group" id="group2"></div>
-            </div>
-            
-            <div class="group-wrapper">
-                <div class="group-title">3분단</div>
-                <div class="column-group" id="group3"></div>
-            </div>
-        </div>
-
-        <div class="controls">
-            <button id="shuffle-btn">🔀 자리 배치하기</button>
-            <p class="notice">* 처음에는 1번부터 순서대로 배치되어 있으며, 버튼을 누르면 직전 짝꿍을 피해 무작위로 섞입니다.</p>
-        </div>
-    </div>
-
-    <script>
-        // 1번부터 27번까지 학생 배열 초기화
-        let currentLayout = Array.from({ length: 27 }, (_, i) => i + 1);
-        let previousPairs = new Set(); // 직전 짝꿍 쌍
-
-        const group1 = document.getElementById('group1');
-        const group2 = document.getElementById('group2');
-        const group3 = document.getElementById('group3');
-        const shuffleBtn = document.getElementById('shuffle-btn');
-
-        // 좌석 화면에 그리기
-        function renderClassroom(layout) {
-            group1.innerHTML = '';
-            group2.innerHTML = '';
-            group3.innerHTML = '';
-
-            let seatIdx = 0;
-
-            // [1분단] 10석
-            for (let i = 0; i < 10; i++) {
-                const row = Math.floor(i / 2) + 1;
-                group1.appendChild(createSeatElement(layout[seatIdx++], `${row}행`));
-            }
-
-            // [2분단] 10석 중 마지막 1자리는 빈자리
-            for (let i = 0; i < 10; i++) {
-                const row = Math.floor(i / 2) + 1;
-                if (i === 9) { 
-                    group2.appendChild(createEmptySeatElement());
-                } else {
-                    group2.appendChild(createSeatElement(layout[seatIdx++], `${row}행`));
-                }
-            }
-
-            // [3분단] 8석
-            for (let i = 0; i < 8; i++) {
-                const row = Math.floor(i / 2) + 1;
-                group3.appendChild(createSeatElement(layout[seatIdx++], `${row}행`));
-            }
-        }
-
-        function createSeatElement(studentNum, label) {
-            const seat = document.createElement('div');
-            seat.className = 'seat';
-            seat.innerHTML = `<span class="seat-label">${label}</span><span>${studentNum}번</span>`;
-            return seat;
-        }
-
-        function createEmptySeatElement() {
-            const seat = document.createElement('div');
-            seat.className = 'seat empty';
-            seat.innerHTML = `<span class="seat-label">5행</span><span>빈자리</span>`;
-            return seat;
-        }
-
-        function extractPairs(layout) {
-            const pairs = new Set();
-            const pairLeftIndices = [
-                0, 2, 4, 6, 8,       
-                10, 12, 14, 16,      
-                19, 21, 23, 25       
-            ];
-            pairLeftIndices.forEach(idx => {
-                const s1 = layout[idx];
-                const s2 = layout[idx + 1];
-                if (s1 && s2) {
-                    pairs.add(`${Math.min(s1, s2)}-${Math.max(s1, s2)}`);
-                }
-            });
-            return pairs;
-        }
-
-        function hasPreviousPair(shuffledLayout) {
-            if (previousPairs.size === 0) return false;
-            const pairLeftIndices = [0, 2, 4, 6, 8, 10, 12, 14, 16, 19, 21, 23, 25];
-            for (let idx of pairLeftIndices) {
-                const s1 = shuffledLayout[idx];
-                const s2 = shuffledLayout[idx + 1];
-                if (s1 && s2) {
-                    const pairKey = `${Math.min(s1, s2)}-${Math.max(s1, s2)}`;
-                    if (previousPairs.has(pairKey)) return true; 
-                }
-            }
-            return false;
-        }
-
-        function shuffleSeats() {
-            previousPairs = extractPairs(currentLayout);
-            let nextLayout = [...currentLayout];
-            let attempts = 0;
-            const maxAttempts = 2000; 
-
-            while (attempts < maxAttempts) {
-                for (let i = nextLayout.length - 1; i > 0; i--) {
-                    const j = Math.floor(Math.random() * (i + 1));
-                    [nextLayout[i], nextLayout[j]] = [nextLayout[j], nextLayout[i]];
-                }
-                if (!hasPreviousPair(nextLayout)) break;
-                attempts++;
-            }
-            currentLayout = nextLayout;
-            renderClassroom(currentLayout);
-        }
-
-        // 창이 열리면 바로 실행
-        window.onload = () => {
-            renderClassroom(currentLayout);
-        };
-        shuffleBtn.addEventListener('click', shuffleSeats);
-    </script>
-</body>
-</html>
+            justify-content: center
