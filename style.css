@@ -24,11 +24,11 @@ function renderClassroom(layout) {
         group1.appendChild(createSeatElement(layout[seatIdx++], `${row}행`));
     }
 
-    // [2분단] 2열 5행 = 총 10석 공간 중 마지막 한 자리는 엑스표 빈자리
+    // [2분단] 2열 5행 = 총 10석 공간 중 마지막 한 자리는 빈자리
     for (let i = 0; i < 10; i++) {
         const row = Math.floor(i / 2) + 1;
         if (i === 9) { // 5행의 오른쪽 자리는 공석 처리
-            group2.appendChild(createEmptySeatElement("❌"));
+            group2.appendChild(createEmptySeatElement());
         } else {
             group2.appendChild(createSeatElement(layout[seatIdx++], `${row}행`));
         }
@@ -50,10 +50,10 @@ function createSeatElement(studentNum, label) {
 }
 
 // 공석(빈자리) 엘리먼트 생성
-function createEmptySeatElement(text) {
+function createEmptySeatElement() {
     const seat = document.createElement('div');
     seat.className = 'seat empty';
-    seat.innerHTML = `<span class="seat-label">5행</span><span>${text}</span>`;
+    seat.innerHTML = `<span class="seat-label">5행</span><span>빈자리</span>`;
     return seat;
 }
 
