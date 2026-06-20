@@ -1,28 +1,31 @@
-```html
 <!DOCTYPE html>
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>우리반 자리배치</title>
+    <title>3학년 우리반 자리 바꾸기</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
+    <div class="container">
+        <h1>🏫 3학년 우리반 자리 바꾸기</h1>
+        
+        <div class="teacher-desk">교탁 (칠판)</div>
 
-<h1>우리반 자리배치</h1>
+        <div class="classroom">
+            <div class="column-group" id="group1"></div>
+            
+            <div class="column-group" id="group2"></div>
+            
+            <div class="column-group" id="group3"></div>
+        </div>
 
-<div class="controls">
-    <textarea id="studentNames" placeholder="학생 이름 27명을 한 줄에 한 명씩 입력하세요"></textarea>
+        <div class="controls">
+            <button id="shuffle-btn">🔀 자리 배치하기</button>
+            <p class="notice">* 버튼을 누르면 직전 자리에서 바로 옆에 앉았던 짝꿍을 자동으로 피해 섞입니다.</p>
+        </div>
+    </div>
 
-    <button id="shuffleBtn">자리배치</button>
-</div>
-
-<div class="teacher">교탁</div>
-
-<div id="classroom"></div>
-
-<script src="script.js"></script>
-
+    <script src="script.js"></script>
 </body>
 </html>
-```
