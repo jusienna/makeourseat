@@ -1,104 +1,31 @@
-```html
 <!DOCTYPE html>
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>학급 자리배치 프로그램</title>
-
+    <title>3학년 우리반 자리 바꾸기</title>
     <link rel="stylesheet" href="style.css">
-
-    <!-- SheetJS -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 </head>
 <body>
-
-    <h1>🎓 학급 자리배치 프로그램</h1>
-
     <div class="container">
+        <h1>🏫 3학년 우리반 자리 바꾸기</h1>
+        
+        <div class="teacher-desk">교탁 (칠판)</div>
 
-        <div class="card">
-
-            <h2>학생 정보 입력</h2>
-
-            <div class="input-area">
-
-                <div>
-                    <label>남학생 명단</label>
-                    <textarea id="boys"
-                        placeholder="한 줄에 한 명씩 입력"></textarea>
-                </div>
-
-                <div>
-                    <label>여학생 명단</label>
-                    <textarea id="girls"
-                        placeholder="한 줄에 한 명씩 입력"></textarea>
-                </div>
-
-                <div>
-                    <label>앞자리 필요 학생</label>
-                    <textarea id="frontStudents"
-                        placeholder="시력 등으로 앞자리가 필요한 학생"></textarea>
-                </div>
-
-            </div>
-
+        <div class="classroom">
+            <div class="column-group" id="group1"></div>
+            
+            <div class="column-group" id="group2"></div>
+            
+            <div class="column-group" id="group3"></div>
         </div>
 
-        <div class="card">
-
-            <h2>엑셀 파일</h2>
-
-            <div class="file-box">
-
-                <label>
-                    학생 명단 엑셀 업로드
-                </label>
-
-                <input
-                    type="file"
-                    id="studentFile"
-                    accept=".xlsx,.xls">
-
-            </div>
-
-            <div class="file-box">
-
-                <label>
-                    이전 자리배치 엑셀 업로드
-                </label>
-
-                <input
-                    type="file"
-                    id="historyFile"
-                    accept=".xlsx,.xls">
-
-            </div>
-
+        <div class="controls">
+            <button id="shuffle-btn">🔀 자리 배치하기</button>
+            <p class="notice">* 이전 자리에서 바로 옆에 앉았던 짝꿍은 자동으로 피해집니다.</p>
         </div>
-
-        <div class="button-area">
-
-            <button id="generateBtn">
-                자리배치하기
-            </button>
-
-            <button id="downloadBtn">
-                결과 엑셀 다운로드
-            </button>
-
-        </div>
-
     </div>
-
-    <div class="teacher">
-        교탁
-    </div>
-
-    <div id="classroom"></div>
 
     <script src="script.js"></script>
-
 </body>
 </html>
-```
