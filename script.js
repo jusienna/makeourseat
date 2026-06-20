@@ -33,15 +33,15 @@ h1 {
     border-radius: 4px;
     font-weight: bold;
     font-size: 16px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
 
 /* 교실 전체 레이아웃 (3개 분단 가로 배치) */
 .classroom {
     display: flex;
     justify-content: center;
-    gap: 40px;
+    gap: 30px;
     margin-bottom: 35px;
-    flex-wrap: wrap; /* 화면이 좁아지면 아래로 내려가도록 보장 */
 }
 
 .group-wrapper {
@@ -52,30 +52,29 @@ h1 {
 
 .group-title {
     font-weight: bold;
-    font-size: 16px;
+    font-size: 14px;
     margin-bottom: 10px;
     color: #34495e;
     background: #e1e8ed;
-    padding: 4px 15px;
-    border-radius: 10px;
+    padding: 6px 16px;
+    border-radius: 20px;
 }
 
-/* 분단 내부 Grid 설정 (확실하게 2열 구조 고정) */
+/* 분단 내부 Grid 설정 (★ 가로 2열 고정 및 간격 조정) */
 .column-group {
     display: grid;
-    grid-template-columns: repeat(2, 80px); /* 가로 2열, 각 자리 80px */
+    grid-template-columns: repeat(2, 90px); /* 가로 2열 고정 (각 자리 90px) */
     gap: 12px;
-    background-color: #fdfdfd;
+    background-color: #fafbfc;
     padding: 15px;
     border: 2px solid #e2e8f0;
     border-radius: 12px;
-    min-height: 200px;
 }
 
-/* 학생 의자/책상 스타일 (눈에 확 띄는 사각형 구조) */
+/* 학생 책상/의자 스타일 (진짜 교실 자리처럼 테두리와 음영 부여) */
 .seat {
-    width: 80px;
-    height: 60px;
+    width: 90px;
+    height: 65px;
     background-color: #3498db;
     color: white;
     border: 2px solid #2980b9;
@@ -86,14 +85,16 @@ h1 {
     align-items: center;
     font-weight: bold;
     font-size: 15px;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    box-shadow: 0 3px 6px rgba(0,0,0,0.1);
+    box-sizing: border-box;
 }
 
-/* 행 표시 레이블 소텍스트 */
+/* 행 표시 소텍스트 */
 .seat .seat-label {
-    font-size: 10px;
+    font-size: 11px;
     opacity: 0.85;
-    margin-bottom: 3px;
+    margin-bottom: 4px;
+    font-weight: normal;
 }
 
 /* 2분단 5행 우측 공백 자리 전용 스타일 */
@@ -104,7 +105,7 @@ h1 {
     box-shadow: none;
 }
 
-/* 하단 버튼 및 가이드 */
+/* 하단 버튼 제어 */
 .controls {
     margin-top: 25px;
 }
