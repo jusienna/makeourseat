@@ -1,120 +1,117 @@
-:root {
-    --chair-color: #e0e0e0;
-    --chair-active: #4ea8de;
-    --text-color: #333;
+```css id="f8q2vm"
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
 }
 
-body {
-    font-family: 'Malgun Gothic', sans-serif;
-    background-color: #f8f9fa;
-    margin: 0;
-    padding: 20px;
-    display: flex;
-    justify-content: center;
-    color: var(--text-color);
+body{
+    font-family:"Malgun Gothic", sans-serif;
+    background:#f5f7fb;
+    padding:20px;
+    text-align:center;
 }
 
-.container {
-    width: 100%;
-    max-width: 900px;
-    text-align: center;
+h1{
+    margin-bottom:20px;
 }
 
-h1 {
-    margin-bottom: 30px;
-    color: #2b2d42;
+.controls{
+    margin-bottom:30px;
 }
 
-/* 교탁 스타일 */
-.teacher-desk {
-    width: 200px;
-    height: 50px;
-    background-color: #8d99ae;
-    color: white;
-    line-height: 50px;
-    margin: 0 auto 40px auto;
-    border-radius: 5px;
-    font-weight: bold;
-    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+textarea{
+    width:320px;
+    height:300px;
+    padding:10px;
+    font-size:14px;
+    border:1px solid #ccc;
+    border-radius:8px;
 }
 
-/* 교실 전체 (3분단 가로 정렬) */
-.classroom {
-    display: flex;
-    justify-content: space-between;
-    gap: 30px;
-    margin-bottom: 40px;
+button{
+    display:block;
+    margin:15px auto;
+    padding:12px 24px;
+    font-size:16px;
+    border:none;
+    border-radius:8px;
+    background:#1976d2;
+    color:white;
+    cursor:pointer;
 }
 
-/* 각 분단 스타일 (2열 구조) */
-.column-group {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 15px;
-    background-color: #ffffff;
-    padding: 15px;
-    border-radius: 10px;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.05);
-    flex: 1;
+button:hover{
+    background:#1565c0;
 }
 
-/* 학생 의자 스타일 */
-.seat {
-    height: 55px;
-    background-color: var(--chair-color);
-    border: 2px solid #bdc3c7;
-    border-radius: 8px;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    font-weight: bold;
-    font-size: 14px;
-    transition: all 0.3s ease;
+.teacher{
+    width:200px;
+    margin:20px auto 40px auto;
+    padding:15px;
+    background:#ffd54f;
+    border-radius:10px;
+    font-weight:bold;
+    font-size:20px;
 }
 
-.seat.assigned {
-    background-color: var(--chair-active);
-    color: white;
-    border-color: #0077b6;
+#classroom{
+    display:flex;
+    justify-content:center;
+    gap:50px;
+    align-items:flex-start;
+    flex-wrap:wrap;
 }
 
-.seat.empty {
-    background-color: #f1f3f5;
-    border: 2px dashed #dee2e6;
-    color: #adb5bd;
+.section{
+    display:grid;
+    grid-template-columns:repeat(2,120px);
+    gap:10px;
 }
 
-.seat .seat-label {
-    font-size: 10px;
-    opacity: 0.8;
-    margin-bottom: 2px;
+.section-wrapper{
+    display:flex;
+    flex-direction:column;
+    align-items:center;
 }
 
-/* 버튼 및 하단 제어 */
-.controls {
-    margin-top: 20px;
+.section-title{
+    margin-bottom:10px;
+    font-size:18px;
+    font-weight:bold;
 }
 
-button {
-    padding: 15px 40px;
-    font-size: 18px;
-    font-weight: bold;
-    background-color: #ef233c;
-    color: white;
-    border: none;
-    border-radius: 8px;
-    cursor: pointer;
-    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-    transition: background 0.2s;
+.seat{
+    width:120px;
+    height:70px;
+    background:white;
+    border:2px solid #90caf9;
+    border-radius:8px;
+
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    align-items:center;
+
+    box-shadow:0 2px 4px rgba(0,0,0,0.1);
 }
 
-button:hover {
-    background-color: #d90429;
+.seat-number{
+    font-size:12px;
+    color:#666;
 }
 
-.notice {
-    font-size: 13px;
-    color: #6c757d;
-    margin-top: 15px;
+.student-name{
+    font-size:15px;
+    font-weight:bold;
 }
+
+.empty{
+    background:#e0e0e0;
+    border-color:#bdbdbd;
+}
+
+.empty .student-name{
+    color:#777;
+}
+```
